@@ -28,7 +28,7 @@ function displayPhotos() {
         // item.setAttribute('target', '_blank')
         setAttributes(item, {
             href: photo.links.html,
-            target: '_blank'
+            target: '_blank',
         })
         // create imaget for photo
         const img = document.createElement('img')
@@ -37,8 +37,8 @@ function displayPhotos() {
         // img.setAttribute('tifle', photo.alt_description)
         setAttributes(img, {
             src: photo.urls.regular,
-            alt: photo.alt.description,
-            title: photo.alt.description
+            alt: photo.alt_description,
+            title: photo.alt_description,
         })
 
         //  put <image> inside <a> both instide 
