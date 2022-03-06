@@ -1,99 +1,179 @@
-const imageContainer = document.getElementById('image-container')
-const loader = document.getElementById('loader')
+const imageContainer = document.getElementById('image-container');
+const loader = document.getElementById('loader');
 
+let ready = false;
+let imagesLoaded = 0;
+let totalImages = 0;
+let photosArray = [];
 
-let ready = false
-let imagesLoaded = 0
-let totalImages = 0
-let photosArray = []
+// Unsplash API
+const count = 30;
+// Normally, don't store API Keys like this, but an exception made here because it is free, and the data is publicly available!
+const apiKey = 'jFgS8tteGD425f4oZfygQVaVnD6gt6GucN2yyz3xFek';
+const apiUrl = `https://api.unsplash.com/photos/random?client_id=${apiKey}&count=${count}`;
 
-
-
-// unsplash
-
-const count = 5
-const apiKey = 'ocNG58F-j2oTMDMYHkG2XDP9FO3J5KMadvO6ZWhwp6Q'
-const apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${count}`
-
-// check if images loaded
-function imageLoaded(){
-    imageLoaded++
-    if (imageLoaded === totalImages){
-        ready = true
-        loader.hidden = true
-
-    }
-
+// Check if all images were loaded
+function imageLoaded() {
+  imagesLoaded++;
+  if (imagesLoaded === totalImages) {
+    ready = true;
+    loader.hidden = true;
+  }
 }
 
-
-// helper function
-function setAttributes(element, attributes){
-    for (const key in attributes){
-        element.setAttribute(key, attributes[key])
-    }
+// Helper Function to Set Attributes on DOM Elements
+function setAttributes(element, attributes) {
+  for (const key in attributes) {
+    element.setAttribute(key, attributes[key]);
+  }
 }
 
-// create elements for links and photos add to dom
+// Create Elements For Links & Photos, Add to DOM
 function displayPhotos() {
-    imageLoaded = 0
-
-    totalImages = photosArray.length
-
-    photosArray.forEach((photo) => {
-            // create <a> to link to unsplash
-        const item = document.createElement('a')
-        // item.setAttribute('href', photo.links.html)
-        // item.setAttribute('target', '_blank')
-        setAttributes(item, {
-            href: photo.links.html,
-            target: '_blank',
-        })
-        // create imaget for photo
-        const img = document.createElement('img')
-        // img.setAttribute('src', photo.urls.regular)
-        // img.setAttribute('alt', photo.alt_description)
-        // img.setAttribute('tifle', photo.alt_description)
-        setAttributes(img, {
-            src: photo.urls.regular,
-            alt: photo.alt_description,
-            title: photo.alt_description,
-        })
-
-        img.addEventListener('load', imageLoaded)
-
-        //  put <image> inside <a> both instide 
-        item.appendChild(img)
-        imageContainer.appendChild(item)
-    })
-
+  imagesLoaded = 0;
+  totalImages = photosArray.length;
+  // Run function for each object in photosArray
+  photosArray.forEach((photo) => {
+    // Create <a> to link to full photo
+    const item = document.createElement('a');
+    setAttributes(item, {
+      href: photo.links.html,
+      target: '_blank',
+    });
+    // Create <img> for photo
+    const img = document.createElement('img');
+    setAttributes(img, {
+      src: photo.urls.regular,
+      alt: photo.alt_description,
+      title: photo.alt_description,
+    });
+    // Event Listener, check when each is finished loading
+    img.addEventListener('load', imageLoaded);
+    // Put <img> inside <a>, then put both inside imageContainer Element
+    item.appendChild(img);
+    imageContainer.appendChild(item);
+  });
 }
 
-
-// get photos
+// Get photos from Unsplash API
 async function getPhotos() {
-    try {
-        const response = await fetch(apiUrl)
-        photosArray = await response.json()
-        displayPhotos()
-        
-    } catch (error) {
-        
-    }
+  try {
+    const response = await fetch(apiUrl);
+    photosArray = await response.json();
+    displayPhotos();
+  } catch (error) {
+    // Catch Error Here
+  }
 }
 
-// check when scrolling and load more photos
+// Check to see if scrolling near bottom of page, Load More Photos
 window.addEventListener('scroll', () => {
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000 && ready){
-        ready = false
-        getPhotos()
+  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000 && ready) {
+    ready = false;
+    getPhotos();
+  }
+});
 
-    }
-})
+// On Load
+getPhotos();
 
 
-// on load
-getPhotos()
+// const imageContainer = document.getElementById('image-container')
+// const loader = document.getElementById('loader')
+
+
+// let ready = false
+// let imagesLoaded = 0
+// let totalImages = 0
+// let photosArray = []
+
+
+
+// // unsplash
+
+// const count = 5
+// const apiKey = 'ocNG58F-j2oTMDMYHkG2XDP9FO3J5KMadvO6ZWhwp6Q'
+// const apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${count}`
+
+// // check if images loaded
+// function imageLoaded(){
+//     imageLoaded++
+//     if (imageLoaded === totalImages){
+//         ready = true
+//         loader.hidden = true
+
+//     }
+
+// }
+
+
+// // helper function
+// function setAttributes(element, attributes){
+//     for (const key in attributes){
+//         element.setAttribute(key, attributes[key])
+//     }
+// }
+
+// // create elements for links and photos add to dom
+// function displayPhotos() {
+//     imageLoaded = 0
+
+//     totalImages = photosArray.length
+
+//     photosArray.forEach((photo) => {
+//             // create <a> to link to unsplash
+//         const item = document.createElement('a')
+//         // item.setAttribute('href', photo.links.html)
+//         // item.setAttribute('target', '_blank')
+//         setAttributes(item, {
+//             href: photo.links.html,
+//             target: '_blank',
+//         })
+//         // create imaget for photo
+//         const img = document.createElement('img')
+//         // img.setAttribute('src', photo.urls.regular)
+//         // img.setAttribute('alt', photo.alt_description)
+//         // img.setAttribute('tifle', photo.alt_description)
+//         setAttributes(img, {
+//             src: photo.urls.regular,
+//             alt: photo.alt_description,
+//             title: photo.alt_description,
+//         })
+
+//         img.addEventListener('load', imageLoaded)
+
+//         //  put <image> inside <a> both instide 
+//         item.appendChild(img)
+//         imageContainer.appendChild(item)
+//     })
+
+// }
+
+
+// // get photos
+// async function getPhotos() {
+//     try {
+//         const response = await fetch(apiUrl)
+//         photosArray = await response.json()
+//         displayPhotos()
+        
+//     } catch (error) {
+        
+//     }
+// }
+
+// // check when scrolling and load more photos
+// window.addEventListener('scroll', () => {
+//     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000 && ready){
+//         ready = false
+//         getPhotos()
+
+//     }
+// })
+
+
+// // on load
+// getPhotos()
 
 
 
